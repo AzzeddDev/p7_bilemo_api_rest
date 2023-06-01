@@ -15,22 +15,22 @@ class Product
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private ?string $name;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="decimal", precision="12", scale="2")
      */
-    private $price;
+    private ?float $price;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $description;
+    private ?string $description;
 
     public function getId(): ?int
     {

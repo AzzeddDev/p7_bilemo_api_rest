@@ -27,7 +27,7 @@ class Customer
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="customerId")
      */
-    private $users;
+    private Collection $users;
 
     public function __construct()
     {
