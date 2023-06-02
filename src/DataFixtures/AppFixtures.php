@@ -31,19 +31,19 @@ class AppFixtures extends Fixture
             $manager->persist($customer);
         }
 
-//        // Création d'un user "normal"
-//        $user = new User();
-//        $user->setEmail("user@productapi.com");
-//        $user->setRole(["ROLE_USER"]);
-//        $user->setPassword($this->userPasswordHasher->hashPassword($user, "password"));
-//        $manager->persist($user);
-//
-//        // Création d'un user admin
-//        $userAdmin = new User();
-//        $userAdmin->setEmail("admin@bookapi.com");
-//        $userAdmin->setRole(["ROLE_ADMIN"]);
-//        $userAdmin->setPassword($this->userPasswordHasher->hashPassword($userAdmin, "password"));
-//        $manager->persist($userAdmin);
+        // Création d'un user "normal"
+        $user = new User();
+        $user->setEmail("user@productapi.com");
+        $user->setRole(["ROLE_USER"]);
+        $user->setPassword($this->userPasswordHasher->hashPassword($user, "password"));
+        $manager->persist($user);
+
+        // Création d'un user admin
+        $userAdmin = new User();
+        $userAdmin->setEmail("admin@bookapi.com");
+        $userAdmin->setRole(["ROLE_ADMIN"]);
+        $userAdmin->setPassword($this->userPasswordHasher->hashPassword($userAdmin, "password"));
+        $manager->persist($userAdmin);
 
         $manager->flush();
     }
