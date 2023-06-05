@@ -3,13 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
  */
-class User
+class User implements \Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface
 {
     /**
      * @ORM\Id
@@ -39,15 +41,19 @@ class User
     private ?string $lastName;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="users")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private ?Customer $customerId;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
-    private $role;
+    private ?string $role;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Customer::class, mappedBy="User")
+     */
+    private $customers;
+
+    public function __construct()
+    {
+        $this->customers = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -102,18 +108,6 @@ class User
         return $this;
     }
 
-    public function getCustomerId(): ?Customer
-    {
-        return $this->customerId;
-    }
-
-    public function setCustomerId(?Customer $customerId): self
-    {
-        $this->customerId = $customerId;
-
-        return $this;
-    }
-
     public function getRole(): ?string
     {
         return $this->role;
@@ -122,6 +116,36 @@ class User
     public function setRole(string $role): self
     {
         $this->role = $role;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Customer>
+     */
+    public function getCustomers(): Collection
+    {
+        return $this->customers;
+    }
+
+    public function addCustomer(Customer $customer): self
+    {
+        if (!$this->customers->contains($customer)) {
+            $this->customers[] = $customer;
+            $customer->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCustomer(Customer $customer): self
+    {
+        if ($this->customers->removeElement($customer)) {
+            // set the owning side to null (unless already changed)
+            if ($customer->getUser() === $this) {
+                $customer->setUser(null);
+            }
+        }
 
         return $this;
     }

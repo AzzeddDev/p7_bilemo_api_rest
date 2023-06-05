@@ -25,14 +25,9 @@ class Customer
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="customerId")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="customers")
      */
-    private Collection $users;
-
-    public function __construct()
-    {
-        $this->users = new ArrayCollection();
-    }
+    private $User;
 
     public function getId(): ?int
     {
@@ -51,32 +46,14 @@ class Customer
         return $this;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
-    public function getUsers(): Collection
+    public function getUser(): ?User
     {
-        return $this->users;
+        return $this->User;
     }
 
-    public function addUser(User $user): self
+    public function setUser(?User $User): self
     {
-        if (!$this->users->contains($user)) {
-            $this->users[] = $user;
-            $user->setCustomerId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): self
-    {
-        if ($this->users->removeElement($user)) {
-            // set the owning side to null (unless already changed)
-            if ($user->getCustomerId() === $this) {
-                $user->setCustomerId(null);
-            }
-        }
+        $this->User = $User;
 
         return $this;
     }
