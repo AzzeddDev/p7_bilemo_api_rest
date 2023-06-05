@@ -7,10 +7,18 @@ use App\Entity\Product;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Faker;
 
 class AppFixtures extends Fixture
 {
+    private UserPasswordHasherInterface $userPasswordHasher;
+
+    public function __construct(UserPasswordHasherInterface $userPasswordHasher)
+    {
+        $this->userPasswordHasher = $userPasswordHasher;
+    }
+
     public function load(ObjectManager $manager): void
     {
         $faker = \Faker\Factory::create('fr_FR');
@@ -24,26 +32,24 @@ class AppFixtures extends Fixture
             $manager->persist($product);
         }
 
+        // Création d'un user
+        $user = new User();
+        $user->setFirstName($faker->firstName);
+        $user->setLastName($faker->lastName);
+        $user->setEmail("admin@productapi.com");
+        $user->setRole("ROLE_ADMIN");
+        $user->setPassword($this->userPasswordHasher->hashPassword($user, "password"));
+        $listUser[] = $user;
+        $manager->persist($user);
+
         // Générer des Customers "Faker"
         for ($c=1; $c < 10; $c++) {
             $customer = new Customer();
             $customer->setName($faker->name);
             $manager->persist($customer);
+            // On sauvegarde l'auteur créé dans un tableau.
+            $customer->setUser($listUser[array_rand($listUser)]);
         }
-
-        // Création d'un user "normal"
-        $user = new User();
-        $user->setEmail("user@productapi.com");
-        $user->setRole(["ROLE_USER"]);
-        $user->setPassword($this->userPasswordHasher->hashPassword($user, "password"));
-        $manager->persist($user);
-
-        // Création d'un user admin
-        $userAdmin = new User();
-        $userAdmin->setEmail("admin@bookapi.com");
-        $userAdmin->setRole(["ROLE_ADMIN"]);
-        $userAdmin->setPassword($this->userPasswordHasher->hashPassword($userAdmin, "password"));
-        $manager->persist($userAdmin);
 
         $manager->flush();
     }
