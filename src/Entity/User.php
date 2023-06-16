@@ -6,54 +6,71 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
  */
-class User implements \Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"getCustomers", "getUsers"})
      */
     private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"getCustomers", "getUsers"})
      */
     private ?string $email;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"getCustomers", "getUsers"})
      */
     private ?string $password;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"getCustomers", "getUsers"})
      */
     private ?string $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"getCustomers", "getUsers"})
      */
     private ?string $lastName;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\OneToMany(targetEntity=Customer::class, mappedBy="User", cascade={"all"})
+     * @Groups({"getUsers"})
      */
-    private ?string $role;
+    private Collection $customers;
 
     /**
-     * @ORM\OneToMany(targetEntity=Customer::class, mappedBy="User")
+     * @ORM\Column(type="json")
+     * @Groups({"getCustomers", "getUsers"})
      */
-    private $customers;
+    private array $roles = [];
 
     public function __construct()
     {
         $this->customers = new ArrayCollection();
     }
+
+
+    public function setId(?int $id): void
+    {
+        $this->id = $id;
+    }
+
 
     public function getId(): ?int
     {
@@ -72,7 +89,10 @@ class User implements \Symfony\Component\Security\Core\User\PasswordAuthenticate
         return $this;
     }
 
-    public function getPassword(): ?string
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -108,14 +128,21 @@ class User implements \Symfony\Component\Security\Core\User\PasswordAuthenticate
         return $this;
     }
 
-    public function getRole(): ?string
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
     {
-        return $this->role;
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
     }
 
-    public function setRole(string $role): self
+    public function setRoles(array $roles): self
     {
-        $this->role = $role;
+        $this->roles = $roles;
 
         return $this;
     }
@@ -148,5 +175,20 @@ class User implements \Symfony\Component\Security\Core\User\PasswordAuthenticate
         }
 
         return $this;
+    }
+
+    public function getSalt()
+    {
+        return null;
+    }
+
+    public function eraseCredentials()
+    {
+
+    }
+
+    public function getUsername(): string
+    {
+        return $this->getEmail();
     }
 }
