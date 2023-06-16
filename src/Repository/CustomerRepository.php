@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Customer;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -37,6 +39,18 @@ class CustomerRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findAllWithPagination($page, $limit, User $user) :Paginator
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->join("c.User", "u")
+            ->where("u.id = :id")
+            ->setParameter("id", $user->getId())
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
+        return new Paginator($qb);
+//        return $qb->getQuery()->getResult();
     }
 
 //    /**
