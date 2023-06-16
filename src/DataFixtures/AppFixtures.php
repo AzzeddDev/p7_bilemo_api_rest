@@ -36,8 +36,8 @@ class AppFixtures extends Fixture
         $user = new User();
         $user->setFirstName($faker->firstName);
         $user->setLastName($faker->lastName);
-        $user->setEmail("admin@productapi.com");
-        $user->setRole("ROLE_ADMIN");
+        $user->setEmail("user1@productapi.com");
+        $user->setRole("ROLE_USER");
         $user->setPassword($this->userPasswordHasher->hashPassword($user, "password"));
         $listUser[] = $user;
         $manager->persist($user);
