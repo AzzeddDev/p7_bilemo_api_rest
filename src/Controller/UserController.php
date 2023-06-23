@@ -6,6 +6,8 @@ use App\Entity\User;
 use App\Entity\Customer;
 use App\Repository\CustomerRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,6 +19,29 @@ use Symfony\Component\Serializer\SerializerInterface;
 class UserController extends AbstractController
 {
     /**
+     * Cette méthode permet de récupérer la liste des Customers.
+     *
+     * @OA\Response(
+     *     response=200,
+     *     description="Retourne la liste des Produit",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Customer::class, groups={"getCustomers"}))
+     *     )
+     * )
+     * @OA\Parameter(
+     *     name="page",
+     *     in="query",
+     *     description="La page que l'on veut récupérer",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter(
+     *     name="limit",
+     *     in="query",
+     *     description="Le nombre d'éléments que l'on veut récupérer",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Tag(name="Customer")
      * @Route("/api/customers", name="listCustomers", methods={"GET"})
      */
     public function getAllCustomers(CustomerRepository $customerRepository, SerializerInterface $serializer, Request $request): JsonResponse
@@ -63,12 +88,26 @@ class UserController extends AbstractController
     }
 
     /**
+     * Cette méthode permet de récupérer les details d'un seul Customer.
+     *
+     * @OA\Response(
+     *     response=200,
+     *     description="Retourne la liste des Produit",
+     *     @Model(type=Customer::class, groups={"getCutomers"})
+     * )
+     * @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     description="Le id du produit",
+     *     @OA\Schema(type="integer", format="int64")
+     * )
+     * @OA\Tag(name="Customer")
      * @Route("/api/customers/{id}", name="detailCustomer", methods={"GET"})
      */
     public function getDetailCustomer(Customer $customer, SerializerInterface $serializer): JsonResponse
     {
         $user = $this->getUser();
-        if ($customer->getUser() !== $user){
+        if ($customer->getUser() !== $user) {
             return new JsonResponse(null, Response::HTTP_FORBIDDEN);
         }
         $jsonCustomer = $serializer->serialize($customer, 'json', ['groups' => 'getCustomers']);
@@ -76,9 +115,11 @@ class UserController extends AbstractController
     }
 
     /**
+     * Cette méthode permet de créer un Customer.
+     * @OA\Tag(name="Customer")
      * @Route("/api/customers", name="createCustomer", methods={"POST"})
      */
-    public function createProduct(Request $request, SerializerInterface $serializer, EntityManagerInterface $em): JsonResponse
+    public function createCustomer(Request $request, SerializerInterface $serializer, EntityManagerInterface $em): JsonResponse
     {
         $user = $this->getUser();
         $customer = $serializer->deserialize($request->getContent(), Customer::class, 'json');
@@ -92,12 +133,14 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/api/Customers/{id}", name="updateCustomer", methods={"PUT"})
+     * Cette méthode permet de faire un update sur un Customer.
+     * @OA\Tag(name="Customer")
+     * @Route("/api/customers/{id}", name="updateCustomer", methods={"PUT"})
      */
-    public function updateProduct(Request $request, SerializerInterface $serializer, Customer $currentCustomer, EntityManagerInterface $em): JsonResponse
+    public function updateCustomer(Request $request, SerializerInterface $serializer, Customer $currentCustomer, EntityManagerInterface $em): JsonResponse
     {
         $user = $this->getUser();
-        if ($currentCustomer->getUser() !== $user){
+        if ($currentCustomer->getUser() !== $user) {
             return new JsonResponse(null, Response::HTTP_FORBIDDEN);
         }
 
@@ -112,12 +155,14 @@ class UserController extends AbstractController
     }
 
     /**
+     * Cette méthode permet de supprimer un Customer.
+     * @OA\Tag(name="Customer")
      * @Route("/api/customers/{id}", name="deleteCustomer", methods={"DELETE"})
      */
-    public function deleteProduct(Customer $customer, EntityManagerInterface $em): JsonResponse
+    public function deleteCustomer(Customer $customer, EntityManagerInterface $em): JsonResponse
     {
         $user = $this->getUser();
-        if ($customer->getUser() !== $user){
+        if ($customer->getUser() !== $user) {
             return new JsonResponse(null, Response::HTTP_FORBIDDEN);
         }
         $em->remove($customer);
