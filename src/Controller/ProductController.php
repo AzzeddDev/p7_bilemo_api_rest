@@ -4,19 +4,41 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Repository\ProductRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use JMS\Serializer\SerializationContext;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class ProductController extends AbstractController
 {
     /**
+     * Cette méthode permet de récupérer l'ensemble des produits.
+     *
+     * @OA\Response(
+     *     response=200,
+     *     description="Retourne la liste des Produit",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Product::class, groups={"getProducts"}))
+     *     )
+     * )
+     * @OA\Parameter(
+     *     name="page",
+     *     in="query",
+     *     description="La page que l'on veut récupérer",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter(
+     *     name="limit",
+     *     in="query",
+     *     description="Le nombre d'éléments que l'on veut récupérer",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Tag(name="Product")
      * @Route("/api/products", name="listProducts", methods={"GET"})
      */
     public function getAllProducts(ProductRepository $productRepository, SerializerInterface $serializer, Request $request): JsonResponse
@@ -31,6 +53,20 @@ class ProductController extends AbstractController
     }
 
     /**
+     * Cette méthode permet de récupérer les details d'un produit.
+     *
+     * @OA\Response(
+     *     response=200,
+     *     description="Retourne la liste des Produit",
+     *     @Model(type=Product::class, groups={"getProducts"})
+     * )
+     * @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     description="Le id du produit",
+     *     @OA\Schema(type="integer", format="int64")
+     * )
+     * @OA\Tag(name="Product")
      * @Route("/api/products/{id}", name="detailProduct", methods={"GET"})
      */
     public function getDetailProduct(Product $product, SerializerInterface $serializer): JsonResponse
@@ -38,47 +74,4 @@ class ProductController extends AbstractController
         $jsonProduct = $serializer->serialize($product, 'json');
         return new JsonResponse($jsonProduct, Response::HTTP_OK, ['accept' => 'json'], true);
     }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//    /**
-//     * @Route("/api/products/{id}", name="deleteProduct", methods={"DELETE"})
-//     */
-//    public function deleteProduct(Product $product, EntityManagerInterface $em): JsonResponse
-//    {
-//        $em->remove($product);
-//        $em->flush();
-//
-//        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
-//    }
-//
-//    /**
-//     * @Route("/api/products", name="createProduct", methods={"POST"})
-//     */
-//    public function createProduct(Request $request, SerializerInterface $serializer, EntityManagerInterface $em): JsonResponse
-//    {
-//        $product = $serializer->deserialize($request->getContent(), Product::class, 'json');
-//        $em->persist($product);
-//        $em->flush();
-//
-//        $jsonProduct = $serializer->serialize($product, 'json', ['groups' => 'getProducts']);
-//
-//        return new JsonResponse($jsonProduct, Response::HTTP_CREATED, [],true);
-//    }
-//
-//    /**
-//     * @Route("/api/products/{id}", name="updateProduct", methods={"PUT"})
-//     */
-//    public function updateProduct(Request $request, SerializerInterface $serializer, Product $currentProduct, EntityManagerInterface $em): JsonResponse
-//    {
-//        $updatedProduct = $serializer->deserialize($request->getContent(),
-//            Product::class,
-//            'json',
-//            [AbstractNormalizer::OBJECT_TO_POPULATE => $currentProduct]);
-//
-//        $em->persist($updatedProduct);
-//        $em->flush();
-//        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
-//    }
-
 }
