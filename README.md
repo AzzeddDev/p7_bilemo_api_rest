@@ -1,7 +1,6 @@
-# p7_API_REST
+# BileMo
 Projet 7 de mon parcours Développeur d'application PHP/Symfony à OpenClassrooms
 
-# BileMo
 ### Documentation
 Une interface pour documenter l'API et tester les différentes méthodes a été réalisée à l'aide de NelmioApiDocBundle.
 
