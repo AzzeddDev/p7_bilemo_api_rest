@@ -23,12 +23,12 @@ class Customer
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"getCustomers", "getUsers"})
+     * @Groups({"getCustomers", "getUsers", "create", "update"})
      */
     private ?string $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="customers", cascade={"all"})
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="customers")
      */
     private ?User $User;
 
