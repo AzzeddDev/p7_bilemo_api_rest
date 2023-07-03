@@ -35,11 +35,8 @@ class UserController extends AbstractController
      *     description="La page que l'on veut récupérer",
      *     @OA\Schema(type="integer")
      * )
-     * @OA\Parameter(
-     *     name="limit",
-     *     in="query",
-     *     description="Le nombre d'éléments que l'on veut récupérer",
-     *     @OA\Schema(type="integer")
+     * @OA\RequestBody(
+     *     @OA\Schema(type="array", @OA\Items(ref=@Model(type=Customer::class, groups={"getCustomers"})))
      * )
      * @OA\Tag(name="Customer")
      * @Route("/api/customers", name="listCustomers", methods={"GET"})
@@ -92,13 +89,18 @@ class UserController extends AbstractController
      *
      * @OA\Response(
      *     response=200,
-     *     description="Retourne la liste des Produit",
+     *     description="list of Products",
      *     @Model(type=Customer::class, groups={"getCutomers"})
+     * )
+     *
+     * @OA\Response(
+     *     response = 403,
+     *     description = "Forbidden access to this content"
      * )
      * @OA\Parameter(
      *     name="id",
      *     in="path",
-     *     description="Le id du produit",
+     *     description="id of a Product",
      *     @OA\Schema(type="integer", format="int64")
      * )
      * @OA\Tag(name="Customer")
@@ -116,6 +118,31 @@ class UserController extends AbstractController
 
     /**
      * Cette méthode permet de créer un Customer.
+     *
+     * @OA\Response(
+     *     response=201,
+     *     description="User successfully added to the Client",
+     *     @Model(type=Customer::class, groups={"getCutomers"})
+     * )
+     * @OA\Response(
+     *     response = 400,
+     *     description = "Bad data sent, check fields and try again"
+     * )
+     * @OA\Response(
+     *     response = 401,
+     *     description = "You must use a valid token to complete this request"
+     * )
+     * @OA\Response(
+     *     response = 403,
+     *     description = "Forbidden access to this content"
+     * )
+     * @OA\Response(
+     *     response = 404,
+     *     description = "This resource doesn't exist !"
+     * )
+     *
+     * @OA\RequestBody(@Model(type=Customer::class, groups={"create"}))
+     *
      * @OA\Tag(name="Customer")
      * @Route("/api/customers", name="createCustomer", methods={"POST"})
      */
@@ -134,6 +161,22 @@ class UserController extends AbstractController
 
     /**
      * Cette méthode permet de faire un update sur un Customer.
+     * @OA\Response(
+     *     response=200,
+     *     description="Update a Customer",
+     *     @Model(type=Customer::class, groups={"getCutomers"})
+     * )
+     * @OA\Response(
+     *     response = 401,
+     *     description = "You must use a valid token to complete this request"
+     * )
+     * @OA\Response(
+     *     response = 404,
+     *     description = "This resource doesn't exist !"
+     * )
+     *
+     * @OA\RequestBody(@Model(type=Customer::class, groups={"update"}))
+     *
      * @OA\Tag(name="Customer")
      * @Route("/api/customers/{id}", name="updateCustomer", methods={"PUT"})
      */
@@ -156,6 +199,13 @@ class UserController extends AbstractController
 
     /**
      * Cette méthode permet de supprimer un Customer.
+     *
+     * @OA\Response(
+     *     response=204,
+     *     description="Delete a Customer",
+     *     @Model(type=Customer::class, groups={"getCutomers"})
+     * )
+     *
      * @OA\Tag(name="Customer")
      * @Route("/api/customers/{id}", name="deleteCustomer", methods={"DELETE"})
      */
