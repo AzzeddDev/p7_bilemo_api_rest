@@ -3,16 +3,16 @@ Projet 7 de mon parcours Développeur d'application PHP/Symfony à OpenClassroom
 
 # BileMo
 ### Documentation
-Une interface pour documenter l'API et teser les différentes méthodes a été réalisée à l'aide de NelmioApiDocBundle.
+Une interface pour documenter l'API et tester les différentes méthodes a été réalisée à l'aide de NelmioApiDocBundle.
 
 ### Diagrammes UML
 * Diagramme de classe
-* Diagramme de cas d'utilsation
+* Diagramme de cas d'utilisation
 * Diagramme de séquence
 
 ### Installation
-* Symfony 5.2.*
-* PHP 7.3.*
+* Symfony 5.4.*
+* PHP 7.2.*
 * MySql 8
 
 ### Suivre les étapes suivantes :
@@ -62,4 +62,5 @@ symfony server:start
 
 
 ### Vous êtes fin prêt pour tester votre API!
-Pour afficher la doucmentation en ligne et tester l'APIrendez-vous à l'adresse suivante votre navigateur : 
+Pour afficher la documentation en ligne et tester l'API rendez-vous à l'adresse suivante votre navigateur :
+[https://127.0.0.1:8000/api/doc](https://127.0.0.1:8000/api/doc)
