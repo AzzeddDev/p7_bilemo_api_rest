@@ -37,13 +37,13 @@ class AppFixtures extends Fixture
         $user->setFirstName($faker->firstName);
         $user->setLastName($faker->lastName);
         $user->setEmail("user1@productapi.com");
-        $user->setRole("ROLE_USER");
+//        $user->setRole("ROLE_USER");
         $user->setPassword($this->userPasswordHasher->hashPassword($user, "password"));
         $listUser[] = $user;
         $manager->persist($user);
 
         // Générer des Customers "Faker"
-        for ($c=1; $c < 10; $c++) {
+        for ($c=1; $c < 20; $c++) {
             $customer = new Customer();
             $customer->setName($faker->name);
             $manager->persist($customer);
